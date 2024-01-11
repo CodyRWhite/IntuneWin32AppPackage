@@ -6,10 +6,10 @@ foreach ($Import in @($Public + $Private)) {
     Catch { Write-Error -Message "Failed to import function $($Import.FullName): $_" }
 }
 
-Export-ModuleMember -Function $Public.BaseName
+#Export-ModuleMember -Function $Public.BaseName
 
 #Alias
-#New-Alias -Name "NewName" -Value "OldName" -Force -ErrorAction SilentlyContinue
+New-Alias -Name "New-IntuneWin32AppPackageAlt" -Value "New-IntuneWin32AppPackage" -Force -ErrorAction SilentlyContinue
 #=================================================
 #Export-ModuleMember
-#Export-ModuleMember -Function * -Alias *
+Export-ModuleMember -Function $Public.BaseName -Alias *
