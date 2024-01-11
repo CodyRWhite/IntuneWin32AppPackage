@@ -21,3 +21,7 @@ New-IntuneWin32AppPackage -SourceFolder "C:\TestFolder\TestApp" -SourceSetupFile
 # IntuneWinAppUtil parameters supported
 New-IntuneWin32AppPackage -c "C:\TestFolder\TestApp" -s "testapp.msi" -o "C:\TestFolder"
 ```
+
+## Example
+Using verbose commands
+![image](https://github.com/CodyRWhite/IntuneWin32AppPackage/assets/56890437/24d46037-d2d5-4cec-bd51-ce165b7233e1)
