@@ -1,10 +1,10 @@
 function New-IntuneWin32AppPackage {
     <#
     .SYNOPSIS
-        Creates a intunwin enxrypted file to be uploaded into intune. 
+        Creates a intunwin encrypted file to be uploaded into intune. 
 
     .DESCRIPTION
-        Creates a intunwin enxrypted file to be uploaded into intune. 
+        Creates a intunwin encrypted file to be uploaded into intune. 
 
     .PARAMETER SourceFolder
         Specifiy the folder where the application is located, everything in this folder will be zipped and included in your package.
