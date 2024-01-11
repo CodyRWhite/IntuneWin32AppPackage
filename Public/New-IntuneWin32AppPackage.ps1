@@ -165,4 +165,6 @@ function New-IntuneWin32AppPackage {
 
     Write-Verbose -Message "Cleaning up working directory"
     Remove-Item -Path $WorkingFolder -Recurse -Force
+
+    return Get-Item -Path "$OutputFolder\$($SourceFile.BaseName).intunewin"
 }
