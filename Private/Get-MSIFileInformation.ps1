@@ -66,10 +66,12 @@ function Get-MSIFileInformation {
     # Read property from MSI database
     $windowsInstallerObject = New-Object -ComObject WindowsInstaller.Installer
  
-    # open read only    
+    # open read only
+    Write-Verbose -Message "Opening MSI database in read only."
     $msiDatabase = $windowsInstallerObject.GetType().InvokeMember('OpenDatabase', 'InvokeMethod', $null, $windowsInstallerObject, @($file.FullName, $msiOpenDatabaseModeReadOnly))
  
     foreach ($property in $properties) {
+        Write-Verbose -Message "Fetching MSI propery: $Property"
         $view = $null
         $query = "SELECT Value FROM Property WHERE Property = '$($property)'"
         $view = $msiDatabase.GetType().InvokeMember('OpenView', 'InvokeMethod', $null, $msiDatabase, ($query))
@@ -87,10 +89,12 @@ function Get-MSIFileInformation {
         $object | Add-Member -MemberType NoteProperty -Name $property -Value $value
     }
  
+    Write-Verbose -Message "Fetching file properties from database"
     $summaryInfo = $msiDatabase.GetType().InvokeMember('SummaryInformation', 'GetProperty', $null, $msiDatabase, $null)
     $summaryInfoPropertiesCount = $summaryInfo.GetType().InvokeMember('PropertyCount', 'GetProperty', $null, $summaryInfo, $null)
  
         (1..$summaryInfoPropertiesCount) | ForEach-Object {
+        Write-Verbose -Message "Fetching property $($summaryInfoHashTable[$_])"
         $value = $SummaryInfo.GetType().InvokeMember("Property", "GetProperty", $Null, $SummaryInfo, $_)
  
         if ($null -eq $value) {
@@ -102,6 +106,8 @@ function Get-MSIFileInformation {
     }
  
     #$msiDatabase.GetType().InvokeMember('Commit', 'InvokeMethod', $null, $msiDatabase, $null)
+    
+    Write-Verbose -Message "Closing MSI database file"
     $view.GetType().InvokeMember('Close', 'InvokeMethod', $null, $view, $null)
     # Run garbage collection and release ComObject
     $null = [System.Runtime.Interopservices.Marshal]::ReleaseComObject($windowsInstallerObject) 

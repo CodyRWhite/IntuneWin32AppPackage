@@ -102,7 +102,7 @@ function New-IntuneWin32AppPackage {
     [io.file]::WriteAllBytes("$ContentsFolder\IntunePackage.intunewin", $encryptionResult.file)
 
     Write-Verbose -Message "Generating 'Detection.xml' file"
-    $MsiData = Get-MSIFileInformation -FilePath $SourceFile.FullName
+    $MsiData = Get-MSIFileInformation -FilePath $SourceFile.FullName -Verbose
 
     Switch ($MsiData.ALLUSERS) {
         "1" {
