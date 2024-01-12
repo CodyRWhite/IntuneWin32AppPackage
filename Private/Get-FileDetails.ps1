@@ -24,11 +24,7 @@ function Get-FileDetails {
         [ValidateNotNullOrEmpty()]
         [System.IO.FileInfo[]]$FilePath
     ) 
-    # https://learn.microsoft.com/en-us/windows/win32/msi/installer-opendatabase
- 
-    $FilePath = "C:\DevOps\Intune\IntuneAppFactory\Templates\Framework\Source\Deploy-Application.exe"
-    $IncludeEmptyFields = $false
-   
+       
     try {
         $file = Get-ChildItem $FilePath -ErrorAction Stop
     }
