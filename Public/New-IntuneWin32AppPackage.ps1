@@ -175,5 +175,3 @@ function New-IntuneWin32AppPackage {
 
     return Get-Item -Path $OutputFile
 }
-
-Get-ItemProperty -Path C:\WinGet\Putty\putty-64bit-0.79-installer.msi | FL * 
