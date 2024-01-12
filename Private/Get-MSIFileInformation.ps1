@@ -25,7 +25,7 @@ function Get-MSIFileInformation {
         [System.IO.FileInfo[]]$FilePath
     ) 
     # https://learn.microsoft.com/en-us/windows/win32/msi/installer-opendatabase
-    $msiOpenDatabaseModeReadOnly = 0
+    $msiOpenDatabaseModeReadOnly = 1
  
     $summaryInfoHashTable = @{
         1  = 'Codepage'
@@ -67,7 +67,7 @@ function Get-MSIFileInformation {
     $windowsInstallerObject = New-Object -ComObject WindowsInstaller.Installer
  
     # open read only
-    Write-Verbose -Message "Opening MSI database in read only."
+    Write-Verbose -Message "Opening MSI database $($file.FullName) in read only."
     $msiDatabase = $windowsInstallerObject.GetType().InvokeMember('OpenDatabase', 'InvokeMethod', $null, $windowsInstallerObject, @($file.FullName, $msiOpenDatabaseModeReadOnly))
  
     foreach ($property in $properties) {
