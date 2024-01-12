@@ -58,7 +58,7 @@ function New-IntuneWin32AppPackage {
     Write-Verbose -Message "Validating requirements"
     $RequiredPaths = @{
         SourceFolder    = $SourceFolder
-        SourceSetupFile = "$SourceFolder\$SourceSetupFile"
+        SourceSetupFile = Join-Path -Path $SourceFolder -ChildPath $SourceSetupFile
         OutputFolder    = $OutputFolder 
     }
 
@@ -68,17 +68,17 @@ function New-IntuneWin32AppPackage {
             Write-Verbose -Message "Validated $Path path: $($RequiredPaths.$Path)"
         }
         else {
-
+            Write-Error -Message "Error: Invalid parameter $Path." -Category InvalidArgument
         }
     }     
 
     $RandomGuid = (New-Guid).Guid
     Write-Verbose -Message "Preparing working environment"
-    $SourceFile = Get-Item -Path "$SourceFolder\$SourceSetupFile"
-    $WorkingFolder = "$env:TEMP\$RandomGuid"
-    $BaseFolder = "$env:TEMP\$RandomGuid\IntuneWinPackage"
-    $ContentsFolder = "$env:TEMP\$RandomGuid\IntuneWinPackage\Contents"
-    $MetadataFolder = "$env:TEMP\$RandomGuid\IntuneWinPackage\Metadata"
+    $SourceFile = Get-Item -Path $(Join-Path -Path $SourceFolder -ChildPath $SourceSetupFile)
+    $WorkingFolder = Join-Path -Path $env:TEMP -ChildPath $RandomGuid
+    $BaseFolder = "$WorkingFolder\IntuneWinPackage"
+    $ContentsFolder = "$WorkingFolder\IntuneWinPackage\Contents"
+    $MetadataFolder = "$WorkingFolder\IntuneWinPackage\Metadata"
 
     New-Item -Path $WorkingFolder -ItemType Directory -Force | Out-Null
     New-Item -Path $BaseFolder -ItemType Directory -Force | Out-Null
@@ -157,8 +157,10 @@ function New-IntuneWin32AppPackage {
     Write-Verbose -Message "Compressing and moving intunewin file to output directory"
     Compress-Archive -Path $BaseFolder -DestinationPath "$OutputFolder\IntunePackage.intunewin.zip" -CompressionLevel NoCompression -Force
 
-    if (Test-Path -Path "$OutputFolder\$($SourceFile.BaseName).intunewin") {
-        Remove-Item -Path "$OutputFolder\$($SourceFile.BaseName).intunewin" -Force
+    $OutputFile = Join-Path -Path $OutputFolder -ChildPath "$($SourceFile.BaseName).intunewin"
+
+    if (Test-Path -Path $OutputFile) {
+        Remove-Item -Path $OutputFile -Force
     }
 
     Rename-Item "$OutputFolder\IntunePackage.intunewin.zip" -NewName "$($SourceFile.BaseName).intunewin" -Force
@@ -166,5 +168,5 @@ function New-IntuneWin32AppPackage {
     Write-Verbose -Message "Cleaning up working directory"
     Remove-Item -Path $WorkingFolder -Recurse -Force
 
-    return Get-Item -Path "$OutputFolder\$($SourceFile.BaseName).intunewin"
+    return Get-Item -Path $OutputFile
 }
