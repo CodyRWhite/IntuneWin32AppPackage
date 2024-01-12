@@ -103,10 +103,13 @@ function New-IntuneWin32AppPackage {
 
     Write-Verbose -Message "Generating 'Detection.xml' file"
     IF ($SourceFile.Extension -eq ".msi") {
-        $MsiData = Get-MSIFileInformation -FilePath $SourceFile.FullName
+        $FileData = Get-MSIFileInformation -FilePath $SourceFile.FullName
+    }
+    else {
+        $FileData = Get-FileDetails -FilePath $SourceFile.FullName
     }
 
-    Switch ($MsiData.ALLUSERS) {
+    Switch ($FileData.ALLUSERS) {
         "1" {
             $MsiExecutionContext = "System"
             $MsiIsMachineInstall = $true
@@ -123,7 +126,7 @@ function New-IntuneWin32AppPackage {
     }
 
     $DetectionXML = [PSCustomObject]@{
-        Name                   = $MsiData.ProductName
+        Name                   = $FileData.ProductName
         UnencryptedContentSize = $UnencryptedContentSize
         FileName               = "IntunePackage.intunewin"
         SetupFile              = $SourceFile.Name
@@ -137,20 +140,20 @@ function New-IntuneWin32AppPackage {
             FileDigestAlgorithm  = $encryptionResult.info.fileDigestAlgorithm
         }
         MsiInfo                = [PSCustomObject]@{
-            MsiProductCode                = $MsiData.ProductCode
-            MsiProductVersion             = $MsiData.ProductVersion
-            MsiPackageCode                = $MsiData.RevisionNumber
-            MsiUpgradeCode                = $MsiData.UpgradeCode
+            MsiProductCode                = $FileData.ProductCode
+            MsiProductVersion             = $FileData.ProductVersion
+            MsiPackageCode                = $FileData.RevisionNumber
+            MsiUpgradeCode                = $FileData.UpgradeCode
             MsiExecutionContext           = $MsiExecutionContext
             MsiRequiresLogon              = $null
-            MsiRequiresReboot             = ConvertTo-Bool -item $MsiData.REBOOT
+            MsiRequiresReboot             = ConvertTo-Bool -item $FileData.REBOOT
             MsiIsMachineInstall           = ConvertTo-Bool -item $MsiIsMachineInstall
             MsiIsUserInstall              = ConvertTo-Bool -item $MsiIsUserInstall
             MsiIncludesServices           = $null
             MsiIncludesODBCDataSource     = $null
             MsiContainsSystemRegistryKeys = $null
             MsiContainsSystemFolders      = $null
-            MsiPublisher                  = $MsiData.Author
+            MsiPublisher                  = $FileData.Author
         }
     }
 
@@ -172,3 +175,5 @@ function New-IntuneWin32AppPackage {
 
     return Get-Item -Path $OutputFile
 }
+
+Get-ItemProperty -Path C:\WinGet\Putty\putty-64bit-0.79-installer.msi | FL * 
